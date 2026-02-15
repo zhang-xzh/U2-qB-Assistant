@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>数据管理</title>
+    <meta charset="UTF-8">
+    <title>qB 关联助手设置</title>
     <style>
-        body { padding: 20px; font-family: sans-serif; }
-        textarea { width: 100%; height: 500px; font-family: monospace; font-size: 12px; }
-        .btns { margin-top: 10px; }
+        body { font-family: sans-serif; padding: 20px; width: 450px; }
+        textarea { width: 100%; height: 300px; font-family: monospace; font-size: 12px; margin-bottom: 10px; }
+        .btns { display: flex; gap: 10px; }
+        button { flex: 1; padding: 10px; cursor: pointer; border: 1px solid #ccc; background: #f9f9f9; }
+        button:hover { background: #eee; }
+        .status { margin-top: 15px; padding: 8px; border-radius: 4px; display: none; }
+        .error { background: #fdeaea; color: #e74c3c; display: block; }
+        .success { background: #eafaf1; color: #27ae60; display: block; }
     </style>
 </head>
 <body>
-<h2>Hash 数据库管理 (JSON 格式)</h2>
-<textarea id="dbText"></textarea>
+<h3 style="margin-top:0">Hash 数据库管理 (JSON)</h3>
+<textarea id="db_json" placeholder='{"12345": "hash_here"}'></textarea>
 <div class="btns">
-    <button id="save">保存修改</button>
-    <button id="copy">复制到剪贴板</button>
+    <button id="import">保存并覆盖</button>
+    <button id="export">读取当前数据</button>
+    <button id="clear" style="color:red">清空全部</button>
 </div>
+<div id="status" class="status"></div>
 <script src="options.js"></script>
 </body>
 </html>

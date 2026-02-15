@@ -1,38 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "U2 qB 关联助手插件版",
-  "version": "1.0",
-  "description": "自动记录详情页 Hash 并关联 qBittorrent 状态",
+  "name": "NexusPHP qB 自动关联助手",
+  "version": "6.4.4",
   "permissions": ["storage"],
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": true
-  },
-  "host_permissions": [
-    "*://u2.dmhy.org/*",
-    "http://localhost:18000/*"
-  ],
+  "host_permissions": ["*://u2.dmhy.org/*", "http://localhost:18000/"],
+  "background": { "service_worker": "background.js" },
   "content_scripts": [
     {
-      "matches": [
-        "*://u2.dmhy.org/torrents.php*"
-      ],
-      "js": [
-        "main_script.js"
-      ],
+      "matches": ["*://u2.dmhy.org/torrents.php*"],
+      "js": ["all.min.js", "main_script.js"],
+      "css": ["style.css"],
       "run_at": "document_end"
     },
     {
-      "matches": [
-        "*://u2.dmhy.org/details.php?id=*"
-      ],
-      "js": [
-        "helper_script.js"
-      ],
+      "matches": ["*://u2.dmhy.org/details.php?id=*"],
+      "js": ["helper_script.js"],
       "run_at": "document_end"
     }
   ],
-  "icons": {
-    "128": "icon.png"
-  }
+  "options_page": "options.html"
 }
