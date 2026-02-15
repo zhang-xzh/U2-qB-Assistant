@@ -20,6 +20,8 @@
             // 运行状态：显示暂停按钮 (ci: fa-pause)，点击执行 stop (act: stop)
             'uploading':          { i: 'fa-circle-arrow-up', c: '#27ae60', act: 'stop',  ci: 'fa-pause' },
             'downloading':        { i: 'fa-circle-arrow-down', c: '#e67e22', act: 'stop',  ci: 'fa-pause' },
+            'queuedUP':           { i: 'fa-clock', c: '#2980b9', act: 'stop', ci: 'fa-pause' },
+            'queuedDL':           { i: 'fa-clock', c: '#2980b9', act: 'stop', ci: 'fa-pause' },
             'stalledUP':          { i: 'fa-circle-arrow-up', c: '#1b639e', act: 'stop',  ci: 'fa-pause' },
             'stalledDL':          { i: 'fa-circle-arrow-down', c: '#2c3e50', act: 'stop',  ci: 'fa-pause' },
             'forcedUP':           { i: 'fa-bolt-lightning', c: '#27ae60', act: 'stop',  ci: 'fa-pause' },
@@ -33,8 +35,7 @@
             'pausedDL':           { i: 'fa-circle-pause', c: '#7f8c8d', act: 'start', ci: 'fa-play' },
             'stoppedUP':          { i: 'fa-circle-check', c: '#7f8c8d', act: 'start', ci: 'fa-play' }, // qB 5.0 新状态
             'stoppedDL':          { i: 'fa-circle-pause', c: '#7f8c8d', act: 'start', ci: 'fa-play' }, // qB 5.0 新状态
-            'queuedUP':           { i: 'fa-clock', c: '#2980b9', act: 'start', ci: 'fa-play' },
-            'queuedDL':           { i: 'fa-clock', c: '#2980b9', act: 'start', ci: 'fa-play' },
+
             'checkingResumeData': { i: 'fa-arrows-rotate fa-spin', c: '#9b59b6', act: 'stop', ci: 'fa-pause' }
         };
         return cfg[s] || { i: 'fa-question-circle', c: '#bdc3c7', act: 'start', ci: 'fa-play' };
