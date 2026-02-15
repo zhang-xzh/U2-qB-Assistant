@@ -1,0 +1,24 @@
+# IDE - WebStorm / JetBrains
+.idea/
+*.iml
+cmake-build-*/
+build/
+
+# IDE - VS Code
+.vscode/
+*.code-workspace
+
+# Node / Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+npm-debug.log*
+
+# OS specific files
+.DS_Store
+Thumbs.db
+.history/
+
+# Extension specific
+*.crx
+*.pem
