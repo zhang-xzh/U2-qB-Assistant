@@ -11,11 +11,6 @@
       "js": ["all.min.js", "main_script.js"],
       "css": ["style.css"],
       "run_at": "document_end"
-    },
-    {
-      "matches": ["*://u2.dmhy.org/details.php?id=*"],
-      "js": ["helper_script.js"],
-      "run_at": "document_end"
     }
   ],
   "options_page": "options.html"

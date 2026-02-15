@@ -1,6 +1,5 @@
 (async () => {
     const LOG_PRE = '%c[qB-5.0]';
-    const LOG_STYLE = 'color: #00d2d3; font-weight: bold; background: #222; padding: 2px 5px;';
     const QB_BASE = 'http://localhost:18000';
 
     const storage = await chrome.storage.local.get("qb_hash_map");
@@ -111,7 +110,7 @@
                 const box = document.getElementById(`qb-box-${tid}`);
                 const h = M[tid];
                 box.innerHTML = `<span id="icon-${h}"></span><span class="qb-prog" id="prog-${h}">--%</span><span class="qb-ctrl" id="ctrl-${h}"></span><button class="qb-unbind" data-tid="${tid}"><i class="fa-solid fa-xmark"></i></button>`;
-                sync();
+                await sync();
             } else {
                 b.innerText = 'Scraping';
                 const html = await (await fetch(`details.php?id=${tid}`)).text();
@@ -140,5 +139,5 @@
         }
     });
 
-    sync(); setInterval(sync, 10000);
+    await sync(); setInterval(sync, 10000);
 })();
