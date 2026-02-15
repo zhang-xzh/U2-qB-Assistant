@@ -13,5 +13,8 @@
       "run_at": "document_end"
     }
   ],
-  "options_page": "options.html"
+  "options_page": "options.html",
+  "icons": {
+    "128": "icon.png"
+  }
 }
