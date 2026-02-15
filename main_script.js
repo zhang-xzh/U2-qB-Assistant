@@ -110,7 +110,7 @@
                 const box = document.getElementById(`qb-box-${tid}`);
                 const h = M[tid];
                 box.innerHTML = `<span id="icon-${h}"></span><span class="qb-prog" id="prog-${h}">--%</span><span class="qb-ctrl" id="ctrl-${h}"></span><button class="qb-unbind" data-tid="${tid}"><i class="fa-solid fa-xmark"></i></button>`;
-                await sync();
+                sync();
             } else {
                 b.innerText = 'Scraping';
                 const html = await (await fetch(`details.php?id=${tid}`)).text();
@@ -139,5 +139,5 @@
         }
     });
 
-    await sync(); setInterval(sync, 10000);
+    sync(); setInterval(sync, 10000);
 })();
