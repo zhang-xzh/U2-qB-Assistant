@@ -5,6 +5,6 @@
 .qb-unbind { color: #ccc; }
 .qb-unbind:hover { color: #e74c3c; }
 .qb-batch-btn { cursor: pointer; margin-left: 5px; color: #3498db; }
-.qb-bind-btn { cursor: pointer; width: 55px; padding: 2px 0; border: 1px solid #ccc; border-radius: 3px; background: #fff; font-size: 11px; }
+.qb-bind-btn,.qb-add-btn { cursor: pointer; width: 35px; padding: 2px 0; border: 1px solid #ccc; border-radius: 3px; background: #fff; font-size: 11px; }
 .fa-spin { animation: fa-spin 2s infinite linear; }
 @keyframes fa-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(359deg); } }

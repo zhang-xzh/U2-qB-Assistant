@@ -1,7 +1,6 @@
 (async () => {
     const LOG_PRE = '%c[qB-5.0]';
     const QB_BASE = 'http://localhost:18000';
-
     const storage = await chrome.storage.local.get("qb_hash_map");
     let M = storage.qb_hash_map || {};
 
@@ -11,10 +10,6 @@
         return res.data;
     };
 
-    /**
-     * 针对 qB 5.0 优化的状态映射
-     * act: 动作 (start/stop) | ci: 按钮图标 (play/pause)
-     */
     const getUI = (s) => {
         const cfg = {
             // 运行状态：显示暂停按钮 (ci: fa-pause)，点击执行 stop (act: stop)
@@ -63,81 +58,85 @@
         } catch (e) { console.error(`${LOG_PRE} Sync Error`, e); }
     }
 
-    // 初始化表格注入
-    document.querySelectorAll('table.torrents > tbody > tr').forEach((tr, i) => {
-        let c = tr.cells[0];
-        if (!c.classList.contains('qb-col')) {
-            c = tr.insertCell(0);
-            c.className = i === 0 ? 'colhead qb-col' : 'rowfollow qb-col';
-        }
-        if (i === 0) { c.innerHTML = '<b>客户端</b><i class="fa-solid fa-bolt qb-batch-btn" id="qb-batch-trigger" title="全部批量关联"></i>'; return; }
-        const tidMatch = tr.querySelector('a[href*="details.php?id="]')?.href.match(/id=(\d+)/);
-        if (!tidMatch) return;
-        const tid = tidMatch[1];
-        const box = document.createElement('div');
-        box.className = 'qb-box'; box.id = `qb-box-${tid}`;
-        if (M[tid]) {
-            const h = M[tid].toLowerCase();
+    const renderBox = (tid, hash = null) => {
+        const box = document.getElementById(`qb-box-${tid}`);
+        if (!box) return;
+        if (hash) {
+            const h = hash.toLowerCase();
             box.innerHTML = `<span id="icon-${h}"></span><span class="qb-prog" id="prog-${h}">--%</span><span class="qb-ctrl" id="ctrl-${h}"></span><button class="qb-unbind" data-tid="${tid}"><i class="fa-solid fa-xmark"></i></button>`;
         } else {
-            box.innerHTML = `<button class="qb-bind-btn" data-tid="${tid}">关联</button>`;
+            box.innerHTML = `<button class="qb-bind-btn" data-tid="${tid}">关联</button><button class="qb-add-btn" data-tid="${tid}">添加</button>`;
         }
-        c.appendChild(box);
+    };
+
+    document.querySelectorAll('table.torrents > tbody > tr').forEach((tr, i) => {
+        let c = tr.cells[0];
+        if (!c.classList.contains('qb-col')) { c = tr.insertCell(0); c.className = i === 0 ? 'colhead qb-col' : 'rowfollow qb-col'; }
+        if (i === 0) { c.innerHTML = '<b>客户端</b><i class="fa-solid fa-bolt qb-batch-btn" id="qb-batch-trigger"></i>'; return; }
+        const tid = tr.querySelector('a[href*="details.php?id="]')?.href.match(/id=(\d+)/)?.[1];
+        if (!tid) return;
+        const box = document.createElement('div'); box.className = 'qb-box'; box.id = `qb-box-${tid}`;
+        c.appendChild(box); renderBox(tid, M[tid]);
     });
 
     document.addEventListener('click', async e => {
-        const t = e.target, ctrl = t.closest('.qb-ctrl'), b = t.closest('.qb-bind-btn'), un = t.closest('.qb-unbind'), batch = t.closest('#qb-batch-trigger');
+        const t = e.target, ctrl = t.closest('.qb-ctrl'), b = t.closest('.qb-bind-btn'), add = t.closest('.qb-add-btn'), un = t.closest('.qb-unbind'), batch = t.closest('#qb-batch-trigger');
 
         if (ctrl) {
             const { action, hash } = ctrl.dataset;
             ctrl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            // qB 5.0 依然支持 /api/v2/torrents/start 和 /api/v2/torrents/stop
-            await qbFetch(`/api/v2/torrents/${action}`, {
-                method: 'POST', body: `hashes=${hash}`,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            });
+            await qbFetch(`/api/v2/torrents/${action}`, { method: 'POST', body: `hashes=${hash}`, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
             setTimeout(sync, 1000);
         }
 
-        if (b) {
-            const tid = b.dataset.tid;
-            b.disabled = true; b.innerText = 'Search';
-            const name = b.closest('tr').querySelector('.embedded a[title]')?.title || '';
-            const list = JSON.parse(await qbFetch('/api/v2/torrents/info'));
-            const match = list.find(x => x.name === name);
-            if (match) {
-                M[tid] = match.hash.toLowerCase();
-                await chrome.storage.local.set({ "qb_hash_map": M });
-                const box = document.getElementById(`qb-box-${tid}`);
-                const h = M[tid];
-                box.innerHTML = `<span id="icon-${h}"></span><span class="qb-prog" id="prog-${h}">--%</span><span class="qb-ctrl" id="ctrl-${h}"></span><button class="qb-unbind" data-tid="${tid}"><i class="fa-solid fa-xmark"></i></button>`;
-                sync();
-            } else {
-                b.innerText = 'Scraping';
+        if (b || add) {
+            const btn = b || add, tid = btn.dataset.tid, name = btn.closest('tr').querySelector('.embedded a[title]')?.title || '';
+            btn.disabled = true; btn.innerText = '抓取';
+            try {
                 const html = await (await fetch(`details.php?id=${tid}`)).text();
-                const ha = html.match(/种子散列值:<\/b>&nbsp;([a-f0-9]{40})/i);
-                if (ha) {
-                    M[tid] = ha[1].toLowerCase();
-                    await chrome.storage.local.set({ "qb_hash_map": M });
-                    const box = document.getElementById(`qb-box-${tid}`);
-                    const h = M[tid];
-                    box.innerHTML = `<span id="icon-${h}"></span><span class="qb-prog" id="prog-${h}">--%</span><span class="qb-ctrl" id="ctrl-${h}"></span><button class="qb-unbind" data-tid="${tid}"><i class="fa-solid fa-xmark"></i></button>`;
-                    sync();
-                } else {
-                    b.innerText = 'Failed';
-                    setTimeout(() => { b.disabled = false; b.innerText = '关联'; }, 2000);
+                const haM = html.match(/种子散列值:<\/b>&nbsp;([a-f0-9]{40})/i);
+                if (!haM) throw new Error('HashNotFound');
+                const pHash = haM[1].toLowerCase();
+
+                if (b) {
+                    try {
+                        // 尝试获取任务属性以验证任务是否存在于客户端
+                        await qbFetch(`/api/v2/torrents/properties?hash=${pHash}`);
+                    } catch (e) {
+                        // 如果客户端不存在该任务，报错并重置按钮
+                        btn.innerText = '未找到';
+                        setTimeout(() => {
+                            btn.disabled = false;
+                            btn.innerText = '关联';
+                        }, 2000);
+                        return; // 终止后续存储逻辑
+                    }
                 }
+
+                if (add) {
+                    btn.innerText = '下载';
+                    const dlM = html.match(/href="(download\.php\?id=\d+[^"]*)"/i);
+                    const dlUrl = new URL(dlM[1], window.location.origin).href;
+                    const resp = await fetch(dlUrl);
+                    const blob = await resp.blob();
+                    const b64 = await new Promise(r => { const reader = new FileReader(); reader.onloadend = () => r(reader.result.split(',')[1]); reader.readAsDataURL(blob); });
+
+                    btn.innerText = '推送';
+                    await chrome.runtime.sendMessage({ type: 'QB_UPLOAD', url: `${QB_BASE}/api/v2/torrents/add`, data: { b64, fileName: `${tid}.torrent`, rename: name } });
+                }
+
+                M[tid] = pHash;
+                await chrome.storage.local.set({ "qb_hash_map": M });
+                renderBox(tid, pHash);
+                sync();
+            } catch (e) {
+                btn.innerText = '错误';
+                setTimeout(() => { btn.disabled = false; btn.innerText = b ? '关联' : '添加'; }, 2000);
             }
         }
 
         if (batch) document.querySelectorAll('.qb-bind-btn').forEach(btn => btn.click());
-
-        if (un) {
-            const tid = un.dataset.tid;
-            delete M[tid];
-            await chrome.storage.local.set({ "qb_hash_map": M });
-            document.getElementById(`qb-box-${tid}`).innerHTML = `<button class="qb-bind-btn" data-tid="${tid}">关联</button>`;
-        }
+        if (un) { const tid = un.dataset.tid; delete M[tid]; await chrome.storage.local.set({ "qb_hash_map": M }); renderBox(tid); }
     });
 
     sync(); setInterval(sync, 10000);

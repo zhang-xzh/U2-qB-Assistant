@@ -1,29 +1,31 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    // 处理常规 API
     if (request.type === 'QB_API') {
-        const { url, options } = request;
-
-        console.log(`%c[Net-Req] %c${options.method || 'GET'} %c${url}`, 'color: #3498db; font-weight: bold', 'color: #fff', 'color: #f1c40f');
-
-        // 核心修复：确保 fetch 的所有分支都能触发 sendResponse
-        fetch(url, options)
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                return res.text();
-            })
-            .then(data => {
-                // 成功分支
-                sendResponse({ success: true, data });
-                console.log(`%c[Net-Res] %cSuccess`, 'color: #27ae60; font-weight: bold', 'color: #fff');
-            })
-            .catch(err => {
-                // 失败分支：必须显式返回成功标识为 false 的响应，而不是让通道挂起
-                console.error(`%c[Net-Err] %c${err.message}`, 'color: #e74c3c; font-weight: bold', 'color: #fff');
-                sendResponse({ success: false, error: err.message });
-            });
-
-        return true; // 保持通道开启，直到上述异步操作执行 sendResponse
+        fetch(request.url, request.options)
+            .then(res => res.ok ? res.text() : Promise.reject(res.status))
+            .then(data => sendResponse({ success: true, data }))
+            .catch(err => sendResponse({ success: false, error: err }));
+        return true;
     }
 
-    // 如果不是 QB_API 类型的消息，直接返回 false 释放通道
+    // 处理种子文件二进制上传
+    if (request.type === 'QB_UPLOAD') {
+        const { url, data } = request;
+        const bytes = atob(data.b64);
+        const arr = new Uint8Array(bytes.length);
+        for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+        const blob = new Blob([arr], { type: 'application/x-bittorrent' });
+
+        const fd = new FormData();
+        fd.append('torrents', blob, data.fileName);
+        fd.append('rename', data.rename);
+        fd.append('tags', 'U2');
+
+        fetch(url, { method: 'POST', body: fd })
+            .then(res => res.text())
+            .then(resText => sendResponse({ success: true, data: resText }))
+            .catch(err => sendResponse({ success: false, error: err.message }));
+        return true;
+    }
     return false;
 });

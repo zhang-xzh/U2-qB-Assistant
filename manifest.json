@@ -8,7 +8,7 @@
   "content_scripts": [
     {
       "matches": ["*://u2.dmhy.org/torrents.php*"],
-      "js": ["font-awesome-6.5.1.js", "main_script.js"],
+      "js": ["font-awesome-6.5.1.js", "main.js"],
       "css": ["style.css"],
       "run_at": "document_end"
     }
