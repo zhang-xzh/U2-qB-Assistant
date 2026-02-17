@@ -13,6 +13,7 @@ node_modules/
 package-lock.json
 yarn.lock
 npm-debug.log*
+dist
 
 # OS specific files
 .DS_Store
