@@ -1,11 +1,13 @@
 import { initIcons } from '../utils/icons';
 import '../assets/style.css';
 import { LOG_PREFIX, QB_BASE_URL, STORAGE_KEY, QB_FORM_HEADERS, qbFetch, blobToBase64, getTorrentHashFromDetailsHtml, getDownloadUrlFromDetailsHtml } from '../utils';
-import { updateTorrentRowUI, renderBox } from './ui';
+import { updateTorrentRowUI, renderBox, renderDetailsRow } from './ui';
 
 (async () => {
     let { [STORAGE_KEY]: hashMap = {} } = (await chrome.storage.local.get(STORAGE_KEY)) as Record<string, any>;
     initIcons();
+
+    const isDetailsPage = window.location.pathname.includes('details.php');
 
     chrome.runtime.onMessage.addListener((message) => {
         if (message.type === 'QB_STATUS_UPDATE') {
@@ -26,31 +28,38 @@ import { updateTorrentRowUI, renderBox } from './ui';
         }
     }
 
-    // 初始化表格列
-    document.querySelectorAll('table.torrents > tbody > tr').forEach((tr, i) => {
-        const tableRow = tr as HTMLTableRowElement;
-        let cell = tableRow.cells[0];
-
-        if (!cell.classList.contains('qb-col')) {
-            cell = tableRow.insertCell(0);
-            cell.className = i === 0 ? 'colhead qb-col' : 'rowfollow qb-col';
+    if (isDetailsPage) {
+        const tid = new URLSearchParams(window.location.search).get('id');
+        if (tid) {
+            renderDetailsRow(tid, hashMap);
         }
+    } else {
+        // 初始化表格列
+        document.querySelectorAll('table.torrents > tbody > tr').forEach((tr, i) => {
+            const tableRow = tr as HTMLTableRowElement;
+            let cell = tableRow.cells[0];
 
-        if (i === 0) {
-            cell.innerHTML = '<b>客户端</b><i class="fa-solid fa-bolt qb-batch-btn" id="qb-batch-trigger"></i>';
-            return;
-        }
+            if (!cell.classList.contains('qb-col')) {
+                cell = tableRow.insertCell(0);
+                cell.className = i === 0 ? 'colhead qb-col' : 'rowfollow qb-col';
+            }
 
-        const tid = tableRow.querySelector('a[href*="details.php?id="]')?.getAttribute('href')?.match(/id=(\d+)/)?.[1];
-        if (!tid) return;
+            if (i === 0) {
+                cell.innerHTML = '<b>客户端</b><i class="fa-solid fa-bolt qb-batch-btn" id="qb-batch-trigger"></i>';
+                return;
+            }
 
-        const box = document.createElement('div');
-        box.className = 'qb-box';
-        box.id = `qb-box-${tid}`;
-        cell.appendChild(box);
+            const tid = tableRow.querySelector('a[href*="details.php?id="]')?.getAttribute('href')?.match(/id=(\d+)/)?.[1];
+            if (!tid) return;
 
-        renderBox(tid, hashMap);
-    });
+            const box = document.createElement('div');
+            box.className = 'qb-box';
+            box.id = `qb-box-${tid}`;
+            cell.appendChild(box);
+
+            renderBox(tid, hashMap, isDetailsPage);
+        });
+    }
 
     // 事件委托
     document.addEventListener('click', async (e) => {
@@ -82,7 +91,7 @@ import { updateTorrentRowUI, renderBox } from './ui';
             const tid = unbindBtn.dataset.tid!;
             delete hashMap[tid];
             await chrome.storage.local.set({ [STORAGE_KEY]: hashMap });
-            renderBox(tid, hashMap);
+            renderBox(tid, hashMap, isDetailsPage);
             return;
         }
 
@@ -131,7 +140,7 @@ import { updateTorrentRowUI, renderBox } from './ui';
             hashMap[tid] = torrentHash;
             await chrome.storage.local.set({ [STORAGE_KEY]: hashMap });
 
-            renderBox(tid, hashMap);
+            renderBox(tid, hashMap, isDetailsPage);
             sync();
         } catch (e) {
             btn.innerText = '错误';

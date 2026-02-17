@@ -10,9 +10,9 @@ export async function syncQBStatus() {
         const list = JSON.parse(data);
 
         // 获取所有打开了 U2 页面的标签页，并发送更新数据
-        const tabs = await chrome.tabs.query({ url: '*://u2.dmhy.org/torrents.php*' });
+        const tabs = await chrome.tabs.query({ url: '*://u2.dmhy.org/*' });
         for (const tab of tabs) {
-            if (tab.id) {
+            if (tab.id && (tab.url?.includes('torrents.php') || tab.url?.includes('details.php'))) {
                 chrome.tabs.sendMessage(tab.id, { type: 'QB_STATUS_UPDATE', data: list }).catch(() => {
                     // 忽略发送失败（例如标签页正在加载中）
                 });

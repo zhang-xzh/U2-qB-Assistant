@@ -10,7 +10,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://u2.dmhy.org/torrents.php*"],
+      "matches": ["*://u2.dmhy.org/torrents.php*", "*://u2.dmhy.org/details.php*"],
       "js": ["src/content/index.ts"],
       "run_at": "document_end"
     }

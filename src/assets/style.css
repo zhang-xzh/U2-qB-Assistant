@@ -1,5 +1,5 @@
 .qb-col { width: 95px !important; min-width: 95px !important; text-align: center !important; border-left: 1px solid #ccc; padding: 2px !important; }
-.qb-box { display: inline-flex !important; align-items: center; justify-content: center; gap: 4px; height: 26px; width: 100%; vertical-align: middle; }
+.qb-box { display: inline-flex !important; align-items: center; justify-content: flex-start; gap: 4px; min-height: 26px; width: 100%; vertical-align: middle; flex-wrap: wrap; }
 .qb-prog { font-family: 'Courier New', monospace; font-size: 11px; width: 34px; font-weight: bold; text-align: center; }
 .qb-ctrl, .qb-unbind { cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; width: 16px; border: none; background: none; }
 .qb-unbind { color: #ccc; }
