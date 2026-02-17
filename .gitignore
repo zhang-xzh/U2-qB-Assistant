@@ -8,12 +8,17 @@ build/
 .vscode/
 *.code-workspace
 
-# Node / Dependencies
+# Node / Dependencies / Managers
 node_modules/
 package-lock.json
 yarn.lock
+bun.lock
 npm-debug.log*
-dist
+
+# Build Output
+dist/
+dist-ssr/
+*.local
 
 # OS specific files
 .DS_Store
