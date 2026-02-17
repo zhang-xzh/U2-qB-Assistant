@@ -17,15 +17,15 @@
   "content_scripts": [
     {
       "js": [
-        "assets/index.ts-loader-BD7wqFoh.js"
+        "assets/index.ts-loader-B6IC4H-x.js"
       ],
       "matches": [
         "*://u2.dmhy.org/torrents.php*"
       ],
+      "run_at": "document_end",
       "css": [
-        "src/assets/style.css"
-      ],
-      "run_at": "document_end"
+        "assets/index-C0PS-7Zq.css"
+      ]
     }
   ],
   "options_page": "options.html",
@@ -39,7 +39,7 @@
       ],
       "resources": [
         "assets/index-gxMnKTjq.js",
-        "assets/index.ts-DrD7s8_G.js"
+        "assets/index.ts-B7NWGTOI.js"
       ],
       "use_dynamic_url": false
     }

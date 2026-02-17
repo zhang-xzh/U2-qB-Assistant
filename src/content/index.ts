@@ -1,4 +1,5 @@
 import '@fortawesome/fontawesome-free/js/all.js';
+import '../assets/style.css';
 import { LOG_PREFIX, QB_BASE_URL, STORAGE_KEY, QB_FORM_HEADERS, qbFetch, blobToBase64, getTorrentHashFromDetailsHtml, getDownloadUrlFromDetailsHtml } from '../utils';
 import { updateTorrentRowUI, renderBox } from './ui';
 

@@ -12,7 +12,6 @@
     {
       "matches": ["*://u2.dmhy.org/torrents.php*"],
       "js": ["src/content/index.ts"],
-      "css": ["src/assets/style.css"],
       "run_at": "document_end"
     }
   ],
