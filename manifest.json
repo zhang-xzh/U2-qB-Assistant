@@ -4,12 +4,15 @@
   "version": "6.4.4",
   "permissions": ["storage"],
   "host_permissions": ["*://u2.dmhy.org/*", "http://localhost:18000/"],
-  "background": { "service_worker": "background.js" },
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
   "content_scripts": [
     {
       "matches": ["*://u2.dmhy.org/torrents.php*"],
-      "js": ["font-awesome-6.5.1.js", "main.js"],
-      "css": ["style.css"],
+      "js": ["src/content/index.ts"],
+      "css": ["src/assets/style.css"],
       "run_at": "document_end"
     }
   ],

@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "NexusPHP qB 自动关联助手",
+  "version": "6.4.4",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://u2.dmhy.org/*",
+    "http://localhost:18000/"
+  ],
+  "background": {
+    "service_worker": "service-worker-loader.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "assets/index.ts-UQisWKzQ.js"
+      ],
+      "matches": [
+        "*://u2.dmhy.org/torrents.php*"
+      ],
+      "css": [
+        "src/assets/style.css"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "options_page": "options.html",
+  "icons": {
+    "128": "icon.png"
+  },
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "*://u2.dmhy.org/*"
+      ],
+      "resources": [
+        "assets/index.ts-UQisWKzQ.js"
+      ],
+      "use_dynamic_url": false
+    }
+  ]
+}
