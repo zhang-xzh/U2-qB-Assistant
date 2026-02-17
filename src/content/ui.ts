@@ -27,7 +27,7 @@ const STATE_UI: Record<string, StateUI> = {
 };
 
 export const getStateUI = (state: string): StateUI =>
-    STATE_UI[state] || { i: 'fa-question-circle', c: '#bdc3c7', act: 'start', ci: 'fa-play' };
+    STATE_UI[state] || { i: 'fa-circle-question', c: '#bdc3c7', act: 'start', ci: 'fa-play' };
 
 export const updateTorrentRowUI = (torrent: any) => {
     const hash = normalizeHash(torrent.hash);

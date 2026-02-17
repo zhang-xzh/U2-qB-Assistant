@@ -1,10 +1,11 @@
-import '@fortawesome/fontawesome-free/js/all.js';
+import { initIcons } from '../utils/icons';
 import '../assets/style.css';
 import { LOG_PREFIX, QB_BASE_URL, STORAGE_KEY, QB_FORM_HEADERS, qbFetch, blobToBase64, getTorrentHashFromDetailsHtml, getDownloadUrlFromDetailsHtml } from '../utils';
 import { updateTorrentRowUI, renderBox } from './ui';
 
 (async () => {
     let { [STORAGE_KEY]: hashMap = {} } = (await chrome.storage.local.get(STORAGE_KEY)) as Record<string, any>;
+    initIcons();
 
     chrome.runtime.onMessage.addListener((message) => {
         if (message.type === 'QB_STATUS_UPDATE') {

@@ -1,7 +1,8 @@
-import { STORAGE_KEY } from '../utils';
+import { STORAGE_KEY, normalizeHash } from '../utils';
 
 const jsonTextarea = document.getElementById('db_json') as HTMLTextAreaElement;
 const statusEl = document.getElementById('status') as HTMLElement;
+const hashInput = document.getElementById('hash_input') as HTMLInputElement | null;
 
 const setStatus = (text: string, type: 'success' | 'error' = 'success') => {
     statusEl.innerText = text;
@@ -45,11 +46,22 @@ document.getElementById('import')!.onclick = async () => {
     }
 };
 
-// 清空
-document.getElementById('clear')!.onclick = async () => {
-    if (!confirm('确定要删除所有关联记录吗？')) return;
-
-    await writeHashMap({});
-    jsonTextarea.value = '{}';
-    setStatus('已重置为空', 'success');
-};
+// Hash 查询并跳转
+document.getElementById('open_detail')?.addEventListener('click', async () => {
+    const raw = (hashInput?.value || '').trim();
+    if (!raw) {
+        setStatus('请输入 hash', 'error');
+        return;
+    }
+    const target = normalizeHash(raw);
+    const hashMap = await readHashMap();
+    const found = Object.entries(hashMap).find(([, hash]) => normalizeHash(hash) === target);
+    if (!found) {
+        setStatus('未找到对应的 id', 'error');
+        return;
+    }
+    const id = found[0];
+    const url = `https://u2.dmhy.org/details.php?id=${encodeURIComponent(id)}`;
+    await chrome.tabs.create({ url });
+    setStatus(`已打开详情页：${id}`, 'success');
+});
