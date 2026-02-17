@@ -1,31 +1,49 @@
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    // 处理常规 API
-    if (request.type === 'QB_API') {
-        fetch(request.url, request.options)
-            .then(res => res.ok ? res.text() : Promise.reject(res.status))
-            .then(data => sendResponse({ success: true, data }))
-            .catch(err => sendResponse({ success: false, error: err }));
+const UPLOAD_TAG = 'U2';
+const TORRENT_MIME = 'application/x-bittorrent';
+
+const sendOk = (sendResponse, data) => sendResponse({ success: true, data });
+const sendError = (sendResponse, error) =>
+    sendResponse({ success: false, error: error instanceof Error ? error.message : String(error) });
+
+const fetchTextOrThrow = async (url, options) => {
+    const res = await fetch(url, options);
+    if (!res.ok) throw new Error(`HTTP_${res.status}`);
+    return res.text();
+};
+
+const base64ToUint8Array = (b64) => {
+    const bytes = atob(b64);
+    const arr = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+    return arr;
+};
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    const { type } = message;
+
+    if (type === 'QB_API') {
+        fetchTextOrThrow(message.url, message.options)
+            .then((text) => sendOk(sendResponse, text))
+            .catch((err) => sendError(sendResponse, err));
         return true;
     }
 
-    // 处理种子文件二进制上传
-    if (request.type === 'QB_UPLOAD') {
-        const { url, data } = request;
-        const bytes = atob(data.b64);
-        const arr = new Uint8Array(bytes.length);
-        for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
-        const blob = new Blob([arr], { type: 'application/x-bittorrent' });
+    if (type === 'QB_UPLOAD') {
+        const { url, data: payload } = message;
 
-        const fd = new FormData();
-        fd.append('torrents', blob, data.fileName);
-        fd.append('rename', data.rename);
-        fd.append('tags', 'U2');
+        const torrentBytes = base64ToUint8Array(payload.b64);
+        const torrentBlob = new Blob([torrentBytes], { type: TORRENT_MIME });
 
-        fetch(url, { method: 'POST', body: fd })
-            .then(res => res.text())
-            .then(resText => sendResponse({ success: true, data: resText }))
-            .catch(err => sendResponse({ success: false, error: err.message }));
+        const formData = new FormData();
+        formData.append('torrents', torrentBlob, payload.fileName);
+        formData.append('rename', payload.rename);
+        formData.append('tags', UPLOAD_TAG);
+
+        fetchTextOrThrow(url, { method: 'POST', body: formData })
+            .then((text) => sendOk(sendResponse, text))
+            .catch((err) => sendError(sendResponse, err));
         return true;
     }
+
     return false;
 });
