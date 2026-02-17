@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'qb_hash_map';
+import { STORAGE_KEY } from '../utils';
 
 const jsonTextarea = document.getElementById('db_json') as HTMLTextAreaElement;
 const statusEl = document.getElementById('status') as HTMLElement;

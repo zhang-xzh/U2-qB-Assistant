@@ -3,7 +3,8 @@
   "name": "NexusPHP qB 自动关联助手",
   "version": "6.4.4",
   "permissions": [
-    "storage"
+    "storage",
+    "alarms"
   ],
   "host_permissions": [
     "*://u2.dmhy.org/*",
@@ -16,7 +17,7 @@
   "content_scripts": [
     {
       "js": [
-        "assets/index.ts-UQisWKzQ.js"
+        "assets/index.ts-loader-BD7wqFoh.js"
       ],
       "matches": [
         "*://u2.dmhy.org/torrents.php*"
@@ -37,7 +38,8 @@
         "*://u2.dmhy.org/*"
       ],
       "resources": [
-        "assets/index.ts-UQisWKzQ.js"
+        "assets/index-gxMnKTjq.js",
+        "assets/index.ts-DrD7s8_G.js"
       ],
       "use_dynamic_url": false
     }

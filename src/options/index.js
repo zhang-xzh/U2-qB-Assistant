@@ -1,5 +1,4 @@
-"use strict";
-const STORAGE_KEY = 'qb_hash_map';
+import { STORAGE_KEY } from '../utils';
 const jsonTextarea = document.getElementById('db_json');
 const statusEl = document.getElementById('status');
 const setStatus = (text, type = 'success') => {
