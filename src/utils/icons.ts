@@ -14,7 +14,8 @@ import {
     faXmark,
     faBolt,
     faSpinner,
-    faStar
+    faStar,
+    faWandMagicSparkles
 } from '@fortawesome/free-solid-svg-icons';
 
 // 添加到图标库
@@ -33,7 +34,8 @@ library.add(
     faXmark,
     faBolt,
     faSpinner,
-    faStar
+    faStar,
+    faWandMagicSparkles
 );
 
 // 监听 DOM 变化自动替换 <i> 标签为 <svg>

@@ -1,4 +1,5 @@
 .qb-col { width: 95px !important; min-width: 95px !important; text-align: center !important; border-left: 1px solid #ccc; padding: 2px !important; }
+.magic-col { width: 40px !important; min-width: 40px !important; text-align: center !important; border-left: 1px solid #ccc !important; padding: 2px !important; }
 .qb-box { display: inline-flex !important; align-items: center; justify-content: center; gap: 4px; min-height: 26px; width: 100%; vertical-align: middle; flex-wrap: wrap; }
 .qb-prog { font-family: 'Courier New', monospace; font-size: 11px; width: 34px; font-weight: bold; text-align: center; }
 .qb-ctrl, .qb-unbind { cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; width: 16px; border: none; background: none; }
@@ -17,16 +18,19 @@
     width: 24px !important;
     height: 24px !important;
     border: none;
-    background: none;
+    background: transparent !important;
     cursor: pointer;
     padding: 0;
-    margin: 0 2px;
+    margin: 0;
+    vertical-align: middle;
 }
 .bookmark-btn svg {
     width: 20px;
     height: 20px;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
     transition: transform 0.2s ease;
+    vertical-align: middle;
+    display: inline-block;
 }
 .bookmark-btn:hover svg {
     transform: scale(1.15);
@@ -36,4 +40,163 @@
 }
 .bookmark-btn:not(.bookmarked) svg {
     color: #95a5a6;
+}
+
+/* 确保收藏链接是行内块元素 */
+a[id^="bookmark"] {
+    display: inline-block !important;
+    vertical-align: middle;
+    line-height: 0;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+}
+
+/* 魔法按钮 - 独立列中 */
+.magic-btn-single {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 2px;
+    font-size: 14px;
+    text-align: center;
+    text-decoration: none !important;
+    background: transparent !important;
+    color: #333;
+}
+.magic-btn-single svg {
+    vertical-align: middle;
+}
+.magic-btn-single:hover {
+    transform: scale(1.1);
+    color: #667eea;
+}
+.magic-btn-single:active {
+    transform: scale(1);
+}
+.magic-btn-single.disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+
+/* 魔法工具栏样式 - NexusPHP 风格 */
+#magicBar {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    font-size: 12px;
+}
+#magicBar > div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.magic-label {
+    font-size: 12px;
+    color: #333;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.magic-input {
+    width: 50px;
+    padding: 3px 6px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    background: #fff;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.magic-input:focus {
+    border-color: #0066cc;
+}
+.magic-input.magic-rate {
+    width: 45px;
+}
+#magicBar label {
+    font-size: 12px;
+    color: #333;
+    cursor: pointer;
+    white-space: nowrap;
+}
+#magicBar input[type="radio"] {
+    cursor: pointer;
+    margin-right: 2px;
+}
+.magic-btn {
+    background: linear-gradient(to bottom, #0066cc, #0055aa);
+    color: #fff;
+    border: 1px solid #004488;
+    padding: 4px 12px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-left: auto;
+    transition: all 0.2s;
+}
+.magic-btn:hover {
+    background: linear-gradient(to bottom, #0077ee, #0066cc);
+    border-color: #0055aa;
+}
+.magic-btn:active {
+    background: #0055aa;
+}
+/* 种子行内魔法按钮 - NexusPHP 风格 */
+.magic-btn-single {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-left: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    font-size: 14px;
+    opacity: 0.85;
+    vertical-align: middle;
+    text-decoration: none !important;
+    line-height: 1;
+}
+a.magic-btn-single:hover {
+    opacity: 1;
+    transform: scale(1.08);
+    background: #f0f0f0;
+}
+a.magic-btn-single:active {
+    transform: scale(1);
+    background: #e0e0e0;
+}
+/* 详情页魔法按钮 - NexusPHP 风格 */
+.magic-detail-btn {
+    background: #f8f8f8;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-size: 11px;
+    cursor: pointer;
+    margin: 3px;
+    transition: all 0.15s;
+}
+.magic-detail-btn:hover {
+    background: #0066cc;
+    color: #fff;
+    border-color: #0055aa;
+}
+.magic-detail-btn:active {
+    background: #0055aa;
 }

@@ -2,6 +2,7 @@ import { initIcons } from '../utils/icons';
 import '../assets/style.css';
 import { LOG_PREFIX, QB_BASE_URL, STORAGE_KEY, QB_FORM_HEADERS, qbFetch, blobToBase64, getTorrentHashFromDetailsHtml, getDownloadUrlFromDetailsHtml } from '../utils';
 import { updateTorrentRowUI, renderBox, renderDetailsRow, replaceBookmarkButtons } from './ui';
+import { initMagicToolbar, castMagicOnTorrent, initMagicOnDetailsPage } from './magic';
 
 // 注入样式：强制种子列表标题换行显示
 function injectTorrentNameStyles() {
@@ -38,7 +39,14 @@ function injectTorrentNameStyles() {
     injectTorrentNameStyles();
     replaceBookmarkButtons();
 
+    // 初始化魔法功能 - 在收藏按钮生成后注入
     const isDetailsPage = window.location.pathname.includes('details.php');
+    if (isDetailsPage) {
+        initMagicOnDetailsPage();
+    } else {
+        initMagicToolbar();
+        // 魔法按钮已在表格初始化时添加
+    }
 
     chrome.runtime.onMessage.addListener((message) => {
         if (message.type === 'QB_STATUS_UPDATE') {
@@ -69,7 +77,9 @@ function injectTorrentNameStyles() {
         document.querySelectorAll('table.torrents > tbody > tr').forEach((tr, i) => {
             const tableRow = tr as HTMLTableRowElement;
             let cell = tableRow.cells[0];
+            let magicCell = tableRow.cells[1];
 
+            // 客户端列
             if (!cell.classList.contains('qb-col')) {
                 cell = tableRow.insertCell(0);
                 cell.className = i === 0 ? 'colhead qb-col' : 'rowfollow qb-col';
@@ -77,7 +87,18 @@ function injectTorrentNameStyles() {
 
             if (i === 0) {
                 cell.innerHTML = '<b>客户端</b><i class="fa-solid fa-bolt qb-batch-btn" id="qb-batch-trigger"></i>';
+                
+                // 添加魔法列表头
+                const magicHeader = tableRow.insertCell(1);
+                magicHeader.className = 'colhead magic-col';
+                magicHeader.innerHTML = '<b>魔法</b>';
                 return;
+            }
+
+            // 魔法列
+            if (!magicCell.classList.contains('magic-col')) {
+                magicCell = tableRow.insertCell(1);
+                magicCell.className = 'rowfollow magic-col';
             }
 
             const tid = tableRow.querySelector('a[href*="details.php?id="]')?.getAttribute('href')?.match(/id=(\d+)/)?.[1];
@@ -89,6 +110,36 @@ function injectTorrentNameStyles() {
             cell.appendChild(box);
 
             renderBox(tid, hashMap, isDetailsPage);
+
+            // 添加魔法按钮
+            const magicBtn = document.createElement('span');
+            magicBtn.className = 'magic-btn-single';
+            magicBtn.dataset.torrentId = tid;
+            
+            // 检测是否有免费优惠
+            const torrentTable = tableRow.querySelector('table.torrentname');
+            const hasFreePromotion = torrentTable?.querySelector('img.pro_free, img.pro_2upfree') !== null;
+            
+            if (hasFreePromotion) {
+                magicBtn.classList.add('disabled');
+                magicBtn.title = '该种子已有免费优惠';
+            } else {
+                magicBtn.title = '对该种子施放魔法';
+            }
+            
+            magicBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i>';
+            magicCell.appendChild(magicBtn);
+            
+            // 绑定点击事件
+            magicBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (magicBtn.classList.contains('disabled')) {
+                    return;
+                }
+                // 直接调用魔法功能
+                castMagicOnTorrent(tid, false, true);
+            });
         });
     }
 
