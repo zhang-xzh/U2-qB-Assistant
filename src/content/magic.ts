@@ -94,11 +94,11 @@ function castMagicAll() {
                 state.magicRangeEnd = Number(magicRangeValueSplit[1]);
             }
         } else {
-            magicRangeValue = parseInt(magicRangeValue);
-            if (magicRangeValue > 0) {
-                state.magicRangeEnd = magicRangeValue;
-            } else if (magicRangeValue < 0) {
-                state.magicRangeStart = state.magicRangeEnd + magicRangeValue + 1;
+            const magicRangeNum = parseInt(magicRangeValue);
+            if (magicRangeNum > 0) {
+                state.magicRangeEnd = magicRangeNum;
+            } else if (magicRangeNum < 0) {
+                state.magicRangeStart = state.magicRangeEnd + magicRangeNum + 1;
             }
         }
 
@@ -129,7 +129,11 @@ function castMagicAllCallback(res: string) {
 }
 
 function submitByXHR(form: HTMLFormElement) {
-    const params = new URLSearchParams(new FormData(form));
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+    formData.forEach((value, key) => {
+        params.append(key, value as string);
+    });
     fetch('/promotion.php', {
         method: 'POST',
         headers: {
@@ -202,30 +206,30 @@ function showHidePromotionOther() {
 
 function initDetailsPage() {
     const torrentID = new URLSearchParams(window.location.search).get('id');
-    if (!isNaN(Number(torrentID))) {
-        const rowhead = Array.from(document.querySelectorAll('.rowhead')).find(el => el.textContent?.includes('流量优惠'));
-        if (!rowhead) return;
+    if (!torrentID || isNaN(Number(torrentID))) return;
 
-        const target = rowhead.parentElement?.children[1] as HTMLElement;
-        if (!target) return;
+    const rowhead = Array.from(document.querySelectorAll('.rowhead')).find(el => el.textContent?.includes('流量优惠'));
+    if (!rowhead) return;
 
-        target.setAttribute('valign', 'bottom');
-        target.insertAdjacentHTML('beforeend', '<br> 恢复系 (一天): ');
+    const target = rowhead.parentElement?.children[1] as HTMLElement;
+    if (!target) return;
 
-        addMagicForm(target, torrentID, 'Free', 'OneKeyFree_Magic_FreePromotionForSelfForm');
-        addMagicForm(target, torrentID, '2X', 'OneKeyFree_Magic_2XPromotionForSelfForm', 3);
-        addMagicForm(target, torrentID, '2.33X', 'OneKeyFree_Magic_233XPromotionForSelfForm', 8, 24, 'SELF', '2.33', '1.00');
-        addMagicForm(target, torrentID, '2X/Free', 'OneKeyFree_Magic_2XFreePromotionForSelfForm', 4);
-        addMagicForm(target, torrentID, '2.33X/Free', 'OneKeyFree_Magic_233XFreePromotionForSelfForm', 8, 24, 'SELF', '2.33', '0.00');
+    target.setAttribute('valign', 'bottom');
+    target.insertAdjacentHTML('beforeend', '<br> 恢复系 (一天): ');
 
-        target.insertAdjacentHTML('beforeend', '<br>地图炮 (一天): ');
+    addMagicForm(target, torrentID, 'Free', 'OneKeyFree_Magic_FreePromotionForSelfForm');
+    addMagicForm(target, torrentID, '2X', 'OneKeyFree_Magic_2XPromotionForSelfForm', 3);
+    addMagicForm(target, torrentID, '2.33X', 'OneKeyFree_Magic_233XPromotionForSelfForm', 8, 24, 'SELF', '2.33', '1.00');
+    addMagicForm(target, torrentID, '2X/Free', 'OneKeyFree_Magic_2XFreePromotionForSelfForm', 4);
+    addMagicForm(target, torrentID, '2.33X/Free', 'OneKeyFree_Magic_233XFreePromotionForSelfForm', 8, 24, 'SELF', '2.33', '0.00');
 
-        addMagicForm(target, torrentID, 'Free', 'OneKeyFree_Magic_FreePromotionForAllForm', 2, 24, 'ALL');
-        addMagicForm(target, torrentID, '2X', 'OneKeyFree_Magic_2XPromotionForAllForm', 3, 24, 'ALL');
-        addMagicForm(target, torrentID, '2.33X', 'OneKeyFree_Magic_233XPromotionForAllForm', 8, 24, 'ALL', '2.33', '1.00');
-        addMagicForm(target, torrentID, '2X/Free', 'OneKeyFree_Magic_2XFreePromotionForAllForm', 4, 24, 'ALL');
-        addMagicForm(target, torrentID, '2.33X/Free', 'OneKeyFree_Magic_233XFreePromotionForAllForm', 8, 24, 'ALL', '2.33', '0.00');
-    }
+    target.insertAdjacentHTML('beforeend', '<br>地图炮 (一天): ');
+
+    addMagicForm(target, torrentID, 'Free', 'OneKeyFree_Magic_FreePromotionForAllForm', 2, 24, 'ALL');
+    addMagicForm(target, torrentID, '2X', 'OneKeyFree_Magic_2XPromotionForAllForm', 3, 24, 'ALL');
+    addMagicForm(target, torrentID, '2.33X', 'OneKeyFree_Magic_233XPromotionForAllForm', 8, 24, 'ALL', '2.33', '1.00');
+    addMagicForm(target, torrentID, '2X/Free', 'OneKeyFree_Magic_2XFreePromotionForAllForm', 4, 24, 'ALL');
+    addMagicForm(target, torrentID, '2.33X/Free', 'OneKeyFree_Magic_233XFreePromotionForAllForm', 8, 24, 'ALL', '2.33', '0.00');
 }
 
 function initListPage() {
