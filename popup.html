@@ -2,11 +2,11 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>qB 关联助手</title>
+    <title>U2 助手</title>
     <style>
         :root {
-            --primary-color: #3498db;
-            --primary-hover: #2980b9;
+            --primary-color: #00bcd4;
+            --primary-hover: #0097a7;
             --text-color: #2c3e50;
             --border-color: #dcdfe6;
             --error-bg: #fef0f0;
@@ -79,7 +79,7 @@
         .footer {
             margin-top: 16px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             border-top: 1px solid #f0f0f0;
             padding-top: 10px;
         }
@@ -97,7 +97,7 @@
 <body>
 <div class="header">
     <img src="icon.png" alt="icon">
-    <span>qB 关联助手</span>
+    <span>U2 助手</span>
 </div>
 <div class="query-box">
     <input id="hash_input" class="text-input" placeholder="输入 Hash 快速打开..." />
@@ -105,7 +105,8 @@
 </div>
 <div id="status" class="status"></div>
 <div class="footer">
-    <a href="#" id="go_options">管理数据库...</a>
+    <a href="#" id="go_options">⚙️ 设置</a>
+    <a href="https://u2.dmhy.org" target="_blank">🌐 U2 首页</a>
 </div>
 <script type="module" src="/src/popup/index.ts"></script>
 </body>

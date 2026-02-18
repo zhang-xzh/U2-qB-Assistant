@@ -13,7 +13,8 @@ import {
     faCircleQuestion,
     faXmark,
     faBolt,
-    faSpinner
+    faSpinner,
+    faStar
 } from '@fortawesome/free-solid-svg-icons';
 
 // 添加到图标库
@@ -31,7 +32,8 @@ library.add(
     faCircleQuestion,
     faXmark,
     faBolt,
-    faSpinner
+    faSpinner,
+    faStar
 );
 
 // 监听 DOM 变化自动替换 <i> 标签为 <svg>

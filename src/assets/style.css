@@ -8,3 +8,32 @@
 .qb-bind-btn,.qb-add-btn { cursor: pointer; width: 35px; padding: 2px 0; border: 1px solid #ccc; border-radius: 3px; background: #fff; font-size: 11px; }
 .fa-spin { animation: fa-spin 2s infinite linear; }
 @keyframes fa-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(359deg); } }
+
+/* 收藏按钮样式替换 */
+.bookmark-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 24px !important;
+    height: 24px !important;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 2px;
+}
+.bookmark-btn svg {
+    width: 20px;
+    height: 20px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+    transition: transform 0.2s ease;
+}
+.bookmark-btn:hover svg {
+    transform: scale(1.15);
+}
+.bookmark-btn.bookmarked svg {
+    color: #f39c12;
+}
+.bookmark-btn:not(.bookmarked) svg {
+    color: #95a5a6;
+}

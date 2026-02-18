@@ -117,3 +117,72 @@ export const renderDetailsRow = (tid: string, hashMap: Record<string, string>) =
     downloadRow.parentNode?.insertBefore(newRow, downloadRow);
     renderBox(tid, hashMap, true);
 };
+
+/**
+ * 替换单个收藏按钮为 FontAwesome 图标
+ */
+const replaceSingleBookmarkButton = (anchor: HTMLAnchorElement) => {
+    // 检查是否已经替换过
+    if (anchor.querySelector('.bookmark-btn')) return;
+    
+    // 查找内部的图片（同时处理 bookmark 和 delbookmark 类）
+    const img = anchor.querySelector('img.bookmark, img.delbookmark') as HTMLImageElement | null;
+    if (!img) return;
+    
+    // 获取当前状态（已收藏/未收藏）
+    const isBookmarked = img.classList.contains('bookmark') || img.getAttribute('alt') === 'Bookmarked';
+    
+    // 创建新的按钮容器
+    const btn = document.createElement('span');
+    btn.className = `bookmark-btn${isBookmarked ? ' bookmarked' : ''}`;
+    
+    // 创建 FontAwesome 图标
+    const icon = document.createElement('i');
+    icon.className = 'fa-solid fa-star';
+    btn.appendChild(icon);
+    
+    // 隐藏原图片
+    img.style.display = 'none';
+    anchor.appendChild(btn);
+};
+
+/**
+ * 替换收藏按钮为 FontAwesome 图标，并监听 DOM 变化
+ */
+export const replaceBookmarkButtons = () => {
+    // 立即替换当前页面上的所有收藏按钮
+    document.querySelectorAll('a[id^="bookmark"]').forEach((link) => {
+        replaceSingleBookmarkButton(link as HTMLAnchorElement);
+    });
+    
+    // 使用 MutationObserver 监听 DOM 变化
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                // 检查新添加的节点
+                if (node instanceof HTMLAnchorElement && node.id.startsWith('bookmark')) {
+                    replaceSingleBookmarkButton(node);
+                }
+                // 检查节点内部是否有收藏按钮
+                if (node instanceof Element) {
+                    node.querySelectorAll('a[id^="bookmark"]').forEach((link) => {
+                        replaceSingleBookmarkButton(link as HTMLAnchorElement);
+                    });
+                }
+            });
+            
+            // 检查被修改的节点
+            if (mutation.target instanceof HTMLAnchorElement && mutation.target.id.startsWith('bookmark')) {
+                replaceSingleBookmarkButton(mutation.target);
+            }
+        });
+    });
+    
+    // 开始监听
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'alt']
+    });
+};

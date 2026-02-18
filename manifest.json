@@ -1,7 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "NexusPHP qB 自动关联助手",
-  "version": "6.4.4",
+  "name": "U2 助手 - 站点增强工具",
+  "version": "7.0.0",
+  "description": "U2 次元专属增强工具：qBittorrent 联动、收藏图标美化、标题换行优化、批量操作",
   "permissions": ["storage", "alarms"],
   "host_permissions": ["*://u2.dmhy.org/*", "http://localhost:18000/"],
   "background": {
