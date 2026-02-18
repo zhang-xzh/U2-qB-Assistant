@@ -4,6 +4,16 @@ import { LOG_PREFIX, QB_BASE_URL, STORAGE_KEY, QB_FORM_HEADERS, qbFetch, blobToB
 import { updateTorrentRowUI, renderBox, renderDetailsRow, replaceBookmarkButtons } from './ui';
 import { initMagicToolbar, castMagicOnTorrent, initMagicOnDetailsPage } from './magic';
 
+// 页面路由
+const getPageType = () => {
+    const path = window.location.pathname;
+    const params = new URLSearchParams(window.location.search);
+
+    if (path.includes('torrents.php')) return 'torrents';
+    if (path.includes('details.php')) return 'details';
+    return 'unknown';
+};
+
 // 注入样式：强制种子列表标题换行显示
 function injectTorrentNameStyles() {
     const style = document.createElement('style');
@@ -34,6 +44,12 @@ function injectTorrentNameStyles() {
 }
 
 (async () => {
+    const pageType = getPageType();
+    console.log(`${LOG_PREFIX} Page type:`, pageType);
+    
+    // 如果是未知页面类型，直接返回
+    if (pageType === 'unknown') return;
+    
     let { [STORAGE_KEY]: hashMap = {} } = (await chrome.storage.local.get(STORAGE_KEY)) as Record<string, any>;
     initIcons();
     injectTorrentNameStyles();

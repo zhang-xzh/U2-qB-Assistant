@@ -306,7 +306,7 @@ export function initMagicOnDetailsPage(): void {
     container.setAttribute('valign', 'bottom');
 
     // 恢复系按钮
-    container.insertAdjacentHTML('beforeend', '<br><strong>✨ 恢复系 (一天):</strong> ');
+    container.insertAdjacentHTML('beforeend', '<br><strong>恢复系 (一天):</strong> ');
     addMagicForm(container, torrentID, 'Magic_FreePromotionForSelfForm', 2, 24, 'SELF');
     addMagicForm(container, torrentID, 'Magic_2XPromotionForSelfForm', 3, 24, 'SELF');
     addMagicForm(container, torrentID, 'Magic_233XPromotionForSelfForm', 8, 24, 'SELF', '2.33', '1.00');
@@ -314,7 +314,7 @@ export function initMagicOnDetailsPage(): void {
     addMagicForm(container, torrentID, 'Magic_233XFreePromotionForSelfForm', 8, 24, 'SELF', '2.33', '0.00');
 
     // 地图炮按钮
-    container.insertAdjacentHTML('beforeend', '<br><strong>🌍 地图炮 (一天):</strong> ');
+    container.insertAdjacentHTML('beforeend', '<br><strong>地图炮 (一天):</strong> ');
     addMagicForm(container, torrentID, 'Magic_FreePromotionForAllForm', 2, 24, 'ALL');
     addMagicForm(container, torrentID, 'Magic_2XPromotionForAllForm', 3, 24, 'ALL');
     addMagicForm(container, torrentID, 'Magic_233XPromotionForAllForm', 8, 24, 'ALL', '2.33', '1.00');
