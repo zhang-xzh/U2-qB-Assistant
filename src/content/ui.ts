@@ -110,8 +110,8 @@ export const renderDetailsRow = (tid: string, hashMap: Record<string, string>) =
     const newRow = document.createElement('tr');
     newRow.innerHTML = `
         <td class="rowhead" width="13%" valign="middle" style="vertical-align: middle;">客户端</td>
-        <td class="rowfollow" width="87%" align="left">
-            <div class="qb-box" id="qb-box-${tid}"></div>
+        <td class="rowfollow" width="87%">
+            <div class="qb-box" id="qb-box-${tid}" style="justify-content: flex-start;"></div>
         </td>
     `;
     downloadRow.parentNode?.insertBefore(newRow, downloadRow);

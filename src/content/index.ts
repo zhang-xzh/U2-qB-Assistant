@@ -2,7 +2,6 @@ import { initIcons } from '../utils/icons';
 import '../assets/style.css';
 import { LOG_PREFIX, QB_BASE_URL, STORAGE_KEY, QB_FORM_HEADERS, qbFetch, blobToBase64, getTorrentHashFromDetailsHtml, getDownloadUrlFromDetailsHtml } from '../utils';
 import { updateTorrentRowUI, renderBox, renderDetailsRow } from './ui';
-import { initMagic } from './magic';
 
 // 注入样式：强制种子列表标题换行显示
 function injectTorrentNameStyles() {
@@ -36,7 +35,6 @@ function injectTorrentNameStyles() {
     let { [STORAGE_KEY]: hashMap = {} } = (await chrome.storage.local.get(STORAGE_KEY)) as Record<string, any>;
     initIcons();
     injectTorrentNameStyles();
-    initMagic();
 
     const isDetailsPage = window.location.pathname.includes('details.php');
 
