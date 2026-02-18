@@ -2,10 +2,41 @@ import { initIcons } from '../utils/icons';
 import '../assets/style.css';
 import { LOG_PREFIX, QB_BASE_URL, STORAGE_KEY, QB_FORM_HEADERS, qbFetch, blobToBase64, getTorrentHashFromDetailsHtml, getDownloadUrlFromDetailsHtml } from '../utils';
 import { updateTorrentRowUI, renderBox, renderDetailsRow } from './ui';
+import { initMagic } from './magic';
+
+// 注入样式：强制种子列表标题换行显示
+function injectTorrentNameStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        /* 针对包含种子标题的容器 */
+        .overflow-control,
+        .torrentname td.embedded {
+            white-space: normal !important;      /* 允许换行 */
+            text-overflow: clip !important;     /* 移除省略号 */
+            overflow: visible !important;       /* 确保内容可见 */
+            word-break: break-all !important;   /* 强制长字符串断行（如英文标题） */
+            line-height: 1.5 !important;        /* 稍微增加行高防止换行后太拥挤 */
+        }
+
+        /* 针对标题链接本身 */
+        .torrentname a.tooltip {
+            display: inline !important;         /* 确保它是行内元素以便自然换行 */
+            white-space: normal !important;
+        }
+
+        /* 如果表格有固定高度限制，强制取消 */
+        table.torrentname {
+            height: auto !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
 
 (async () => {
     let { [STORAGE_KEY]: hashMap = {} } = (await chrome.storage.local.get(STORAGE_KEY)) as Record<string, any>;
     initIcons();
+    injectTorrentNameStyles();
+    initMagic();
 
     const isDetailsPage = window.location.pathname.includes('details.php');
 
