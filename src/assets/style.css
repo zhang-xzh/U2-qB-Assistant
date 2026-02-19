@@ -171,12 +171,12 @@ a[id^="bookmark"] {
     text-decoration: none !important;
     line-height: 1;
 }
-a.magic-btn-single:hover {
+.magic-btn-single:hover {
     opacity: 1;
     transform: scale(1.08);
     background: #f0f0f0;
 }
-a.magic-btn-single:active {
+.magic-btn-single:active {
     transform: scale(1);
     background: #e0e0e0;
 }

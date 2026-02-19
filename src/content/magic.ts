@@ -141,7 +141,7 @@ export function castMagicOnTorrent(torrentID: string, useXHR = false, warning = 
     const formName = `Magic_PromotionFormFor${torrentID}`;
 
     // 查找魔法按钮所在的单元格，作为表单容器
-    const magicBtn = document.querySelector(`a.magic-btn-single[data-torrent-id="${torrentID}"]`);
+    const magicBtn = document.querySelector(`.magic-btn-single[data-torrent-id="${torrentID}"]`);
     const container = magicBtn?.closest('td.embedded');
     
     if (!container) {
