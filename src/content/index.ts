@@ -131,18 +131,7 @@ function injectTorrentNameStyles() {
             const magicBtn = document.createElement('span');
             magicBtn.className = 'magic-btn-single';
             magicBtn.dataset.torrentId = tid;
-            
-            // 检测是否有免费优惠
-            const torrentTable = tableRow.querySelector('table.torrentname');
-            const hasFreePromotion = torrentTable?.querySelector('img.pro_free, img.pro_2upfree') !== null;
-            
-            if (hasFreePromotion) {
-                magicBtn.classList.add('disabled');
-                magicBtn.title = '该种子已有免费优惠';
-            } else {
-                magicBtn.title = '对该种子施放魔法';
-            }
-            
+            magicBtn.title = '对该种子施放魔法';
             magicBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i>';
             magicCell.appendChild(magicBtn);
             

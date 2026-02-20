@@ -30,7 +30,7 @@ let magicRangeEnd = 0;
 function getMagicSettings(): MagicSettings {
     return {
         target: (document.querySelector('input[name="magicTarget"]:checked') as HTMLInputElement)?.value as 'SELF' | 'ALL' || 'SELF',
-        hours: parseInt((document.querySelector('input[name="magicTime"]') as HTMLInputElement)?.value || '24'),
+        hours: parseInt((document.querySelector('input[name="magicTime"]') as HTMLInputElement)?.value || '120'),
         promotion: parseInt((document.querySelector('input[name="magicType"]:checked') as HTMLInputElement)?.value || '2'),
         ur: (document.querySelector('input[name="magicType_OtherUR"]') as HTMLInputElement)?.value || '1.00',
         dr: (document.querySelector('input[name="magicType_OtherDR"]') as HTMLInputElement)?.value || '1.00'
@@ -210,7 +210,7 @@ export function initMagicToolbar(): void {
             </div>
             <div id="magicTimeDiv">
                 <span class="magic-label">放魔期限:</span>
-                <input type="text" name="magicTime" class="magic-input" value="24">
+                <input type="text" name="magicTime" class="magic-input" value="120">
             </div>
             <div id="magicTypeDiv">
                 <span class="magic-label">放魔类型:</span>
@@ -306,20 +306,20 @@ export function initMagicOnDetailsPage(): void {
     container.setAttribute('valign', 'bottom');
 
     // 恢复系按钮
-    container.insertAdjacentHTML('beforeend', '<br><strong>恢复系 (一天):</strong> ');
-    addMagicForm(container, torrentID, 'Magic_FreePromotionForSelfForm', 2, 24, 'SELF');
-    addMagicForm(container, torrentID, 'Magic_2XPromotionForSelfForm', 3, 24, 'SELF');
-    addMagicForm(container, torrentID, 'Magic_233XPromotionForSelfForm', 8, 24, 'SELF', '2.33', '1.00');
-    addMagicForm(container, torrentID, 'Magic_2XFreePromotionForSelfForm', 4, 24, 'SELF');
-    addMagicForm(container, torrentID, 'Magic_233XFreePromotionForSelfForm', 8, 24, 'SELF', '2.33', '0.00');
+    container.insertAdjacentHTML('beforeend', '<br><strong>恢复系 (五天):</strong> ');
+    addMagicForm(container, torrentID, 'Magic_FreePromotionForSelfForm', 2, 120, 'SELF');
+    addMagicForm(container, torrentID, 'Magic_2XPromotionForSelfForm', 3, 120, 'SELF');
+    addMagicForm(container, torrentID, 'Magic_233XPromotionForSelfForm', 8, 120, 'SELF', '2.33', '1.00');
+    addMagicForm(container, torrentID, 'Magic_2XFreePromotionForSelfForm', 4, 120, 'SELF');
+    addMagicForm(container, torrentID, 'Magic_233XFreePromotionForSelfForm', 8, 120, 'SELF', '2.33', '0.00');
 
     // 地图炮按钮
-    container.insertAdjacentHTML('beforeend', '<br><strong>地图炮 (一天):</strong> ');
-    addMagicForm(container, torrentID, 'Magic_FreePromotionForAllForm', 2, 24, 'ALL');
-    addMagicForm(container, torrentID, 'Magic_2XPromotionForAllForm', 3, 24, 'ALL');
-    addMagicForm(container, torrentID, 'Magic_233XPromotionForAllForm', 8, 24, 'ALL', '2.33', '1.00');
-    addMagicForm(container, torrentID, 'Magic_2XFreePromotionForAllForm', 4, 24, 'ALL');
-    addMagicForm(container, torrentID, 'Magic_233XFreePromotionForAllForm', 8, 24, 'ALL', '2.33', '0.00');
+    container.insertAdjacentHTML('beforeend', '<br><strong>地图炮 (五天):</strong> ');
+    addMagicForm(container, torrentID, 'Magic_FreePromotionForAllForm', 2, 120, 'ALL');
+    addMagicForm(container, torrentID, 'Magic_2XPromotionForAllForm', 3, 120, 'ALL');
+    addMagicForm(container, torrentID, 'Magic_233XPromotionForAllForm', 8, 120, 'ALL', '2.33', '1.00');
+    addMagicForm(container, torrentID, 'Magic_2XFreePromotionForAllForm', 4, 120, 'ALL');
+    addMagicForm(container, torrentID, 'Magic_233XFreePromotionForAllForm', 8, 120, 'ALL', '2.33', '0.00');
 
     // 为所有表单添加提交按钮
     container.querySelectorAll('form').forEach((form) => {
