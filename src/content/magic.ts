@@ -3,6 +3,8 @@
  * 源自 U2-OneKeyFree 用户脚本
  */
 
+import { MessageType } from '../utils';
+
 interface MagicSettings {
     target: 'SELF' | 'ALL';
     hours: number;
@@ -89,26 +91,39 @@ function addMagicForm(
 }
 
 /**
- * 提交表单（XHR 方式）
+ * 提交表单（通过后台脚本）
  */
-function submitByXHR(form: HTMLFormElement): Promise<void> {
+function submitViaBackground(form: HTMLFormElement): Promise<void> {
     return new Promise((resolve, reject) => {
         const formData = new FormData(form);
-        fetch('/promotion.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+        const data = {
+            torrent: formData.get('torrent') as string,
+            user: formData.get('user') as string,
+            hours: formData.get('hours') as string,
+            promotion: formData.get('promotion') as string,
+            ur: formData.get('ur') as string,
+            dr: formData.get('dr') as string
+        };
+
+        chrome.runtime.sendMessage(
+            {
+                type: MessageType.MAGIC,
+                action: 'cast',
+                formData: data
             },
-            body: new URLSearchParams(formData as any).toString()
-        })
-            .then(res => res.text())
-            .then(res => {
-                if (typeof res === 'string' && res.indexOf('location.href') !== -1) {
-                    successCount++;
+            (response) => {
+                if (chrome.runtime.lastError) {
+                    reject(new Error(chrome.runtime.lastError.message));
+                    return;
                 }
-                resolve();
-            })
-            .catch(reject);
+                if (response?.success) {
+                    successCount++;
+                    resolve();
+                } else {
+                    reject(new Error(response?.error || '魔法施放失败'));
+                }
+            }
+        );
     });
 }
 
@@ -137,7 +152,6 @@ export function castMagicOnTorrent(torrentID: string, useXHR = false, warning = 
         return;
     }
 
-    const settings = getMagicSettings();
     const formName = `Magic_PromotionFormFor${torrentID}`;
 
     // 查找魔法按钮所在的单元格，作为表单容器
@@ -149,10 +163,10 @@ export function castMagicOnTorrent(torrentID: string, useXHR = false, warning = 
         return;
     }
 
-    const form = addMagicForm(container, torrentID, formName, settings.promotion, settings.hours, settings.target, settings.ur, settings.dr);
+    const form = addMagicForm(container, torrentID, formName, 2, 120, 'SELF');
 
     if (useXHR) {
-        submitByXHR(form).then(magicCallback).catch(magicCallback);
+        submitViaBackground(form).then(magicCallback).catch(magicCallback);
     } else {
         form.submit();
     }
@@ -174,7 +188,6 @@ export function castMagicAll(): void {
         return;
     }
 
-    const settings = getMagicSettings();
     magicRangeStart = 1;
     magicRangeEnd = totalCount;
 

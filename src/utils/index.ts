@@ -3,8 +3,15 @@ export const STORAGE_KEY = 'qb_hash_map';
 export const ALARM_NAME = 'QB_SYNC_ALARM';
 export const UPLOAD_TAG = 'U2';
 export const TORRENT_MIME = 'application/x-bittorrent';
-export const LOG_PREFIX = '%c[qB-5.0]';
+export const LOG_PREFIX = '%c[U2X]';
 export const QB_FORM_HEADERS = { 'Content-Type': 'application/x-www-form-urlencoded' };
+
+export enum MessageType {
+    QB_API = 'QB_API',
+    QB_UPLOAD = 'QB_UPLOAD',
+    MAGIC = 'MAGIC',
+    QB_STATUS_UPDATE = 'QB_STATUS_UPDATE'
+}
 
 export const normalizeHash = (hash: string | undefined) => String(hash || '').toLowerCase();
 
@@ -42,7 +49,7 @@ export const getDownloadUrlFromDetailsHtml = (html: string) => {
 
 export const qbFetch = async (path: string, options: RequestInit = { method: 'GET' }) => {
     const res = await chrome.runtime.sendMessage({
-        type: 'QB_API',
+        type: MessageType.QB_API,
         url: `${QB_BASE_URL}${path}`,
         options
     });

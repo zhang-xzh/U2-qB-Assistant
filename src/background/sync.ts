@@ -1,4 +1,4 @@
-import { ALARM_NAME, STORAGE_KEY, QB_BASE_URL, fetchTextOrThrow } from '../utils';
+import { STORAGE_KEY, QB_BASE_URL, fetchTextOrThrow, MessageType } from '../utils';
 
 export async function syncQBStatus() {
     try {
@@ -13,7 +13,7 @@ export async function syncQBStatus() {
         const tabs = await chrome.tabs.query({ url: '*://u2.dmhy.org/*' });
         for (const tab of tabs) {
             if (tab.id && (tab.url?.includes('torrents.php') || tab.url?.includes('details.php'))) {
-                chrome.tabs.sendMessage(tab.id, { type: 'QB_STATUS_UPDATE', data: list }).catch(() => {
+                chrome.tabs.sendMessage(tab.id, { type: MessageType.QB_STATUS_UPDATE, data: list }).catch(() => {
                     // 忽略发送失败（例如标签页正在加载中）
                 });
             }

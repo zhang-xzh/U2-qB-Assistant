@@ -1,16 +1,22 @@
 import { handleQBAPI } from './api';
 import { handleQBUpload } from './upload';
+import { handleMagic } from './magic';
 import { setupAlarms } from './alarms';
+import { MessageType } from '../utils';
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const { type } = message;
 
-    if (type === 'QB_API') {
+    if (type === MessageType.QB_API) {
         return handleQBAPI(message, sendResponse);
     }
 
-    if (type === 'QB_UPLOAD') {
+    if (type === MessageType.QB_UPLOAD) {
         return handleQBUpload(message, sendResponse);
+    }
+
+    if (type === MessageType.MAGIC) {
+        return handleMagic(message, sendResponse);
     }
 
     return false;

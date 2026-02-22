@@ -1,13 +1,12 @@
 import { initIcons } from '../utils/icons';
 import '../assets/style.css';
-import { LOG_PREFIX, QB_BASE_URL, STORAGE_KEY, QB_FORM_HEADERS, qbFetch, blobToBase64, getTorrentHashFromDetailsHtml, getDownloadUrlFromDetailsHtml } from '../utils';
+import { LOG_PREFIX, QB_BASE_URL, STORAGE_KEY, QB_FORM_HEADERS, qbFetch, blobToBase64, getTorrentHashFromDetailsHtml, getDownloadUrlFromDetailsHtml, MessageType } from '../utils';
 import { updateTorrentRowUI, renderBox, renderDetailsRow, replaceBookmarkButtons } from './ui';
 import { initMagicToolbar, castMagicOnTorrent, initMagicOnDetailsPage } from './magic';
 
 // 页面路由
 const getPageType = () => {
     const path = window.location.pathname;
-    const params = new URLSearchParams(window.location.search);
 
     if (path.includes('torrents.php')) return 'torrents';
     if (path.includes('details.php')) return 'details';
@@ -65,7 +64,7 @@ function injectTorrentNameStyles() {
     }
 
     chrome.runtime.onMessage.addListener((message) => {
-        if (message.type === 'QB_STATUS_UPDATE') {
+        if (message.type === MessageType.QB_STATUS_UPDATE) {
             message.data.forEach(updateTorrentRowUI);
         }
     });
@@ -218,7 +217,7 @@ function injectTorrentNameStyles() {
 
                 btn.innerText = '推送';
                 await chrome.runtime.sendMessage({
-                    type: 'QB_UPLOAD',
+                    type: MessageType.QB_UPLOAD,
                     url: `${QB_BASE_URL}/api/v2/torrents/add`,
                     data: { b64, fileName: `${tid}.torrent`, rename }
                 });
