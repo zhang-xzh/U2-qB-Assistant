@@ -18,6 +18,7 @@ npm-debug.log*
 # Build Output
 dist/
 dist-ssr/
+dist-firefox/
 *.local
 
 # OS specific files

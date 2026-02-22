@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "U2 助手 - 站点增强工具",
+  "version": "7.0.0",
+  "description": "U2 增强工具",
+  "permissions": ["storage", "alarms"],
+  "host_permissions": ["*://u2.dmhy.org/*", "http://localhost:18000/"],
+  "background": {
+    "scripts": ["assets/service-worker.js"],
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://u2.dmhy.org/*"],
+      "js": ["assets/content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "128": "icon.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "u2-assistant@example.com",
+      "strict_min_version": "109.0"
+    }
+  }
+}

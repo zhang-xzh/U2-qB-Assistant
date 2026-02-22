@@ -121,16 +121,65 @@ bun install
 ```
 
 ### 开发模式
+
+#### Chrome
 ```bash
 bun dev
 ```
 Vite 将监听文件变化并自动重新编译。在 Chrome 中加载项目根目录即可。
 
+#### Firefox
+```bash
+bun dev:firefox
+```
+在 Firefox 中通过 `about:debugging#/runtime/this-firefox` 加载临时扩展。
+
 ### 生产编译
+
+#### Chrome
 ```bash
 bun run build
 ```
 编译后的插件位于 `dist` 目录。
+
+#### Firefox
+```bash
+bun run build:firefox
+```
+编译后的文件位于 `dist-firefox` 目录。
+
+如需打包成 XPI：
+```bash
+bun run package:firefox
+```
+生成的 XPI 包位于 `dist-firefox/u2-assistant-7.0.0.xpi`。
+
+### 安装说明
+
+#### Chrome
+1. 打开 `chrome://extensions/`
+2. 启用 **开发者模式**
+3. 点击 **加载已解压的扩展程序**
+4. 选择 `dist` 目录
+
+#### Firefox
+
+**方式一：临时加载（推荐开发时使用，无需签名）**
+1. 打开 `about:debugging#/runtime/this-firefox`
+2. 点击 **临时载入附加组件**
+3. 选择 `dist-firefox/manifest.json` 文件
+
+**方式二：安装 XPI（需禁用签名验证）**
+1. 地址栏输入 `about:config`
+2. 搜索 `xpinstall.signatures.required`，设置为 `false`
+3. 按 `Ctrl+Shift+A` 打开附加组件管理
+4. 齿轮图标 → **从文件安装附加组件**
+5. 选择 `dist-firefox/u2-assistant-7.0.0.xpi`
+
+**方式三：使用签名版本（正式发布）**
+1. 在 [Firefox 开发者中心](https://addons.mozilla.org/developers/) 注册账号
+2. 提交扩展获取签名版本
+3. 安装签名后的 XPI（可在 [AMO](https://addons.mozilla.org/) 公开或自行分发）
 
 ---
 
@@ -153,6 +202,11 @@ bun run build
 ---
 
 ## ⚠️ 注意事项
+
+### Firefox 支持
+- 需要 Firefox 109 或更高版本（支持 Manifest V3）
+- 使用 `bun run build:firefox` 构建 Firefox 版本
+- Firefox 版本与 Chrome 版本功能相同
 
 ### 魔法施放
 - 施放魔法需要足够的魔力值
