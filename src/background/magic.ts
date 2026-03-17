@@ -1,7 +1,9 @@
+import { getErrorMessage, type MagicMessage, type MagicResponse } from '../utils';
+
 /**
  * 处理魔法请求
  */
-export async function handleMagic(message: any, sendResponse: (response: any) => void): Promise<boolean> {
+export async function handleMagic(message: MagicMessage, sendResponse: (response: MagicResponse) => void): Promise<boolean> {
     const { action, formData } = message;
 
     if (action === 'cast') {
@@ -28,7 +30,7 @@ export async function handleMagic(message: any, sendResponse: (response: any) =>
             sendResponse({ success });
         } catch (error) {
             console.error('Magic request failed:', error);
-            sendResponse({ success: false, error: String(error) });
+            sendResponse({ success: false, error: getErrorMessage(error) });
         }
         return true;
     }

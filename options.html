@@ -110,6 +110,24 @@
             outline: none;
             font-size: 14px;
         }
+        .inline-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .inline-row .text-input {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        .inline-row button {
+            flex: none;
+            min-width: 120px;
+        }
+        .hint {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #909399;
+        }
         #open_detail {
             flex: none;
             border: none;
@@ -166,6 +184,15 @@
             <input id="hash_input" class="text-input" placeholder="输入 Hash 自动跳转详情页..." />
             <button id="open_detail">🔍 打开详情</button>
         </div>
+    </div>
+
+    <div class="section">
+        <span class="label">前端状态刷新间隔</span>
+        <div class="inline-row">
+            <input id="sync_interval_seconds" class="text-input" type="number" min="1" max="60" step="1" placeholder="秒" />
+            <button id="save_sync_interval">保存间隔</button>
+        </div>
+        <div class="hint">页面可见且存在已绑定种子时，按这里设置的秒数轮询 qB 状态。</div>
     </div>
 
     <div id="status" class="status"></div>

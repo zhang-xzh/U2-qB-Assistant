@@ -1,7 +1,7 @@
-import { fetchTextOrThrow, base64ToUint8Array, TORRENT_MIME, UPLOAD_TAG } from '../utils';
-import { sendOk, sendError } from './api';
+import { base64ToUint8Array, fetchTextOrThrow, TORRENT_MIME, UPLOAD_TAG, type QBUploadMessage, type ResponseSender } from '../utils';
+import { sendError, sendOk } from './api';
 
-export const handleQBUpload = (message: any, sendResponse: (response: any) => void) => {
+export const handleQBUpload = (message: QBUploadMessage, sendResponse: ResponseSender<string>) => {
     const { url, data: payload } = message;
 
     const torrentBytes = base64ToUint8Array(payload.b64);

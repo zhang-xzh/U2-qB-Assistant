@@ -1,4 +1,5 @@
-import { STORAGE_KEY, QB_BASE_URL, fetchTextOrThrow, MessageType } from '../utils';
+import type { Torrent } from '@ctrl/qbittorrent';
+import { fetchTextOrThrow, MessageType, QB_BASE_URL, STORAGE_KEY } from '../utils';
 
 export async function syncQBStatus() {
     try {
@@ -7,7 +8,7 @@ export async function syncQBStatus() {
         if (!hashes.length) return;
 
         const data = await fetchTextOrThrow(`${QB_BASE_URL}/api/v2/torrents/info?hashes=${hashes.join('|')}`, { method: 'GET' });
-        const list = JSON.parse(data);
+        const list = JSON.parse(data) as Torrent[];
 
         // 获取所有打开了 U2 页面的标签页，并发送更新数据
         const tabs = await chrome.tabs.query({ url: '*://u2.dmhy.org/*' });

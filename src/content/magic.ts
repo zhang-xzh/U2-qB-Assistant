@@ -3,7 +3,7 @@
  * 源自 U2-OneKeyFree 用户脚本
  */
 
-import { MessageType } from '../utils';
+import { MessageType, type MagicMessage, type MagicResponse } from '../utils';
 
 interface MagicSettings {
     target: 'SELF' | 'ALL';
@@ -11,6 +11,13 @@ interface MagicSettings {
     promotion: number;
     ur: string;
     dr: string;
+}
+
+declare global {
+    interface Window {
+        castMagicOnTorrent: typeof castMagicOnTorrent;
+        getMagicSettings: typeof getMagicSettings;
+    }
 }
 
 const MAGIC_PROMOTION_TYPES: Record<number, { ur: string; dr: string; label: string }> = {
@@ -98,32 +105,31 @@ function submitViaBackground(form: HTMLFormElement): Promise<void> {
         const formData = new FormData(form);
         const data = {
             torrent: formData.get('torrent') as string,
-            user: formData.get('user') as string,
+            user: formData.get('user') as 'SELF' | 'ALL',
             hours: formData.get('hours') as string,
             promotion: formData.get('promotion') as string,
             ur: formData.get('ur') as string,
             dr: formData.get('dr') as string
         };
 
-        chrome.runtime.sendMessage(
-            {
-                type: MessageType.MAGIC,
-                action: 'cast',
-                formData: data
-            },
-            (response) => {
-                if (chrome.runtime.lastError) {
-                    reject(new Error(chrome.runtime.lastError.message));
-                    return;
-                }
-                if (response?.success) {
-                    successCount++;
-                    resolve();
-                } else {
-                    reject(new Error(response?.error || '魔法施放失败'));
-                }
+        const message: MagicMessage = {
+            type: MessageType.MAGIC,
+            action: 'cast',
+            formData: data
+        };
+
+        chrome.runtime.sendMessage(message, (response: MagicResponse | undefined) => {
+            if (chrome.runtime.lastError) {
+                reject(new Error(chrome.runtime.lastError.message));
+                return;
             }
-        );
+            if (response?.success) {
+                successCount++;
+                resolve();
+            } else {
+                reject(new Error(response?.error || '魔法施放失败'));
+            }
+        });
     });
 }
 
@@ -364,6 +370,6 @@ export function initMagicOnDetailsPage(): void {
 
 // 暴露到全局作用域供列表页使用
 if (typeof window !== 'undefined') {
-    (window as any).castMagicOnTorrent = castMagicOnTorrent;
-    (window as any).getMagicSettings = getMagicSettings;
+    window.castMagicOnTorrent = castMagicOnTorrent;
+    window.getMagicSettings = getMagicSettings;
 }

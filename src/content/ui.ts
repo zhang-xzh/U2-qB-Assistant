@@ -1,3 +1,4 @@
+import type { Torrent } from '@ctrl/qbittorrent';
 import { normalizeHash } from '../utils';
 
 export interface StateUI {
@@ -29,7 +30,7 @@ const STATE_UI: Record<string, StateUI> = {
 export const getStateUI = (state: string): StateUI =>
     STATE_UI[state] || { i: 'fa-circle-question', c: '#bdc3c7', act: 'start', ci: 'fa-play' };
 
-export const updateTorrentRowUI = (torrent: any) => {
+export const updateTorrentRowUI = (torrent: Torrent) => {
     const hash = normalizeHash(torrent.hash);
     const ui = getStateUI(torrent.state);
 

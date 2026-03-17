@@ -1,22 +1,22 @@
-import { handleQBAPI } from './api';
-import { handleQBUpload } from './upload';
-import { handleMagic } from './magic';
+import { MessageType, type BackgroundMessage, type MagicResponse, type ResponseSender } from '../utils';
 import { setupAlarms } from './alarms';
-import { MessageType } from '../utils';
+import { handleQBAPI } from './api';
+import { handleMagic } from './magic';
+import { handleQBUpload } from './upload';
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    const { type } = message;
+    const { type } = message as BackgroundMessage;
 
     if (type === MessageType.QB_API) {
-        return handleQBAPI(message, sendResponse);
+        return handleQBAPI(message as BackgroundMessage & { type: MessageType.QB_API }, sendResponse as ResponseSender<string>);
     }
 
     if (type === MessageType.QB_UPLOAD) {
-        return handleQBUpload(message, sendResponse);
+        return handleQBUpload(message as BackgroundMessage & { type: MessageType.QB_UPLOAD }, sendResponse as ResponseSender<string>);
     }
 
     if (type === MessageType.MAGIC) {
-        return handleMagic(message, sendResponse);
+        return handleMagic(message as BackgroundMessage & { type: MessageType.MAGIC }, sendResponse as (response: MagicResponse) => void);
     }
 
     return false;

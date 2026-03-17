@@ -1,27 +1,31 @@
-import { initIcons } from "../utils/icons";
+import type { Torrent } from '@ctrl/qbittorrent';
 import "../assets/style.css";
 import {
+  blobToBase64,
+  DEFAULT_FRONTEND_SYNC_INTERVAL_SECONDS,
+  FRONTEND_SYNC_INTERVAL_SECONDS_KEY,
+  getDownloadUrlFromDetailsHtml,
+  getTorrentHashFromDetailsHtml,
   LOG_PREFIX,
+  MessageType,
+  normalizeFrontendSyncIntervalSeconds,
   QB_BASE_URL,
-  STORAGE_KEY,
   QB_FORM_HEADERS,
   qbFetch,
-  blobToBase64,
-  getTorrentHashFromDetailsHtml,
-  getDownloadUrlFromDetailsHtml,
-  MessageType,
+  STORAGE_KEY,
 } from "../utils";
+import { initIcons } from "../utils/icons";
 import {
-  updateTorrentRowUI,
+  castMagicOnTorrent,
+  initMagicOnDetailsPage,
+  initMagicToolbar,
+} from "./magic";
+import {
   renderBox,
   renderDetailsRow,
   replaceBookmarkButtons,
+  updateTorrentRowUI,
 } from "./ui";
-import {
-  initMagicToolbar,
-  castMagicOnTorrent,
-  initMagicOnDetailsPage,
-} from "./magic";
 
 // 页面路由
 const getPageType = () => {
@@ -68,9 +72,14 @@ function injectTorrentNameStyles() {
   // 如果是未知页面类型，直接返回
   if (pageType === "unknown") return;
 
-  let { [STORAGE_KEY]: hashMap = {} } = (await chrome.storage.local.get(
+  const storageData = await chrome.storage.local.get([
     STORAGE_KEY,
-  )) as Record<string, any>;
+    FRONTEND_SYNC_INTERVAL_SECONDS_KEY,
+  ]);
+  let hashMap = (storageData[STORAGE_KEY] || {}) as Record<string, string>;
+  let frontendSyncIntervalSeconds = normalizeFrontendSyncIntervalSeconds(
+    storageData[FRONTEND_SYNC_INTERVAL_SECONDS_KEY],
+  );
   initIcons();
   injectTorrentNameStyles();
   replaceBookmarkButtons();
@@ -90,6 +99,17 @@ function injectTorrentNameStyles() {
     }
   });
 
+  let syncTimer: number | null = null;
+
+  const hasBoundTorrents = () => Object.keys(hashMap).length > 0;
+
+  const getSyncIntervalMs = () =>
+    frontendSyncIntervalSeconds * 1000 ||
+    DEFAULT_FRONTEND_SYNC_INTERVAL_SECONDS * 1000;
+
+  const shouldRunSyncLoop = () =>
+    document.visibilityState === "visible" && hasBoundTorrents();
+
   async function sync() {
     const hashes = Object.values(hashMap);
     if (!hashes.length) return;
@@ -98,12 +118,65 @@ function injectTorrentNameStyles() {
       const data = await qbFetch(
         `/api/v2/torrents/info?hashes=${hashes.join("|")}`,
       );
-      const list = JSON.parse(data);
+      const list = JSON.parse(data) as Torrent[];
       list.forEach(updateTorrentRowUI);
     } catch (e) {
       console.error(`${LOG_PREFIX} Sync Error`, e);
     }
   }
+
+  function startSyncLoop() {
+    if (syncTimer !== null || !shouldRunSyncLoop()) return;
+
+    syncTimer = window.setInterval(() => {
+      void sync();
+    }, getSyncIntervalMs());
+  }
+
+  function stopSyncLoop() {
+    if (syncTimer === null) return;
+
+    window.clearInterval(syncTimer);
+    syncTimer = null;
+  }
+
+  function restartSyncLoop() {
+    stopSyncLoop();
+    startSyncLoop();
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      if (hasBoundTorrents()) {
+        void sync();
+      }
+      startSyncLoop();
+      return;
+    }
+
+    stopSyncLoop();
+  });
+
+  window.addEventListener("beforeunload", stopSyncLoop);
+
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== "local") return;
+
+    if (changes[STORAGE_KEY]) {
+      hashMap = (changes[STORAGE_KEY].newValue || {}) as Record<string, string>;
+      restartSyncLoop();
+      if (shouldRunSyncLoop()) {
+        void sync();
+      }
+    }
+
+    if (changes[FRONTEND_SYNC_INTERVAL_SECONDS_KEY]) {
+      frontendSyncIntervalSeconds = normalizeFrontendSyncIntervalSeconds(
+        changes[FRONTEND_SYNC_INTERVAL_SECONDS_KEY].newValue,
+      );
+      restartSyncLoop();
+    }
+  });
 
   if (isDetailsPage) {
     const tid = new URLSearchParams(window.location.search).get("id");
@@ -217,6 +290,7 @@ function injectTorrentNameStyles() {
       delete hashMap[tid];
       await chrome.storage.local.set({ [STORAGE_KEY]: hashMap });
       renderBox(tid, hashMap, isDetailsPage);
+      restartSyncLoop();
       return;
     }
 
@@ -271,7 +345,8 @@ function injectTorrentNameStyles() {
       await chrome.storage.local.set({ [STORAGE_KEY]: hashMap });
 
       renderBox(tid, hashMap, isDetailsPage);
-      sync();
+      restartSyncLoop();
+      void sync();
     } catch (e) {
       btn.innerText = "错误";
       setTimeout(() => {
@@ -281,5 +356,10 @@ function injectTorrentNameStyles() {
     }
   });
 
-  sync();
+  if (hasBoundTorrents()) {
+    void sync();
+  }
+  if (document.visibilityState === "visible") {
+    startSyncLoop();
+  }
 })();
